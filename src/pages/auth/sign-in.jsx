@@ -4,23 +4,37 @@ import {
   Checkbox,
   Button,
   Typography,
+  Alert,
 } from "@material-tailwind/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { _login } from "../../services/authServices";
-
+import { useAuth } from "@/context/AuthContext";
 
 export function SignIn() {
   const [formData, setFormData] = useState({ userName: '', password: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+    
     try {
       const response = await _login(formData);
-      navigate('/dashboard/home');
+      if (response.success) {
+        login(response.user, response.token);
+        navigate('/dashboard/home');
+      } else {
+        setError(response.message || 'Login failed');
+      }
     } catch (error) {
-      console.error('Login failed:', error);
+      setError('Login failed. Please check your credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -36,13 +50,18 @@ export function SignIn() {
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your username and password to Sign In.</Typography>
         </div>
         <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSubmit}>
+          {error && (
+            <Alert color="red" className="mb-4">
+              {error}
+            </Alert>
+          )}
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your username
             </Typography>
             <Input
               name="userName"
-              type="userName"
+              type="text"
               size="lg"
               placeholder="name@mail.com"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
@@ -88,8 +107,8 @@ export function SignIn() {
             }
             containerProps={{ className: "-ml-2.5" }}
           />
-          <Button className="mt-6" fullWidth type="submit">
-            Sign In
+          <Button className="mt-6" fullWidth type="submit" disabled={loading}>
+            {loading ? 'Signing In...' : 'Sign In'}
           </Button>
 
           <div className="flex items-center justify-between gap-2 mt-6">

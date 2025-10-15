@@ -4,14 +4,48 @@ import {
   Checkbox,
   Button,
   Typography,
+  Alert,
 } from "@material-tailwind/react";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { _register } from "@/services/authServices";
 
 export function SignUp() {
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '' });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    
+    try {
+      const response = await _register(formData);
+      if (response.success) {
+        setSuccess('Registration successful! Password sent to your email. Please check your email and sign in.');
+        setTimeout(() => {
+          navigate('/auth/sign-in');
+        }, 3000);
+      } else {
+        setError(response.message || 'Registration failed');
+      }
+    } catch (error) {
+      setError('Registration failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  }
   return (
     <section className="m-8 flex">
-            <div className="w-2/5 h-full hidden lg:block">
+      <div className="w-2/5 h-full hidden lg:block">
         <img
           src="/img/pattern.png"
           className="h-full w-full object-cover rounded-3xl"
@@ -19,17 +53,80 @@ export function SignUp() {
       </div>
       <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
         <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">Join Us Today</Typography>
+          <Typography variant="h2" className="font-bold mb-4">Manage Your Expense Today</Typography>
           <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">Enter your email and password to register.</Typography>
         </div>
-        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2">
+        <form className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2" onSubmit={handleSubmit}>
+          {error && (
+            <Alert color="red" className="mb-4">
+              {error}
+            </Alert>
+          )}
+          {success && (
+            <Alert color="green" className="mb-4">
+              {success}
+            </Alert>
+          )}
           <div className="mb-1 flex flex-col gap-6">
+            <Typography>
+              First Name
+            </Typography>
+            <Input
+              name="firstName"
+              type="text"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+              size="lg"
+              placeholder="Enter Your First Name"
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+            />
+            <Typography>
+              Last Name
+            </Typography>
+            <Input
+              name="lastName"
+              type="text"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+              size="lg"
+              placeholder="Enter Your Last Name"
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+            />
             <Typography variant="small" color="blue-gray" className="-mb-3 font-medium">
               Your email
             </Typography>
             <Input
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
               size="lg"
               placeholder="name@mail.com"
+              className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
+            />
+            <Typography>
+              Mobile Number
+            </Typography>
+            <Input
+              name="phone"
+              type="text"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+              size="lg"
+              placeholder="Enter Your First Name"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -54,8 +151,8 @@ export function SignUp() {
             }
             containerProps={{ className: "-ml-2.5" }}
           />
-          <Button className="mt-6" fullWidth>
-            Register Now
+          <Button type="submit" className="mt-6" fullWidth disabled={loading}>
+            {loading ? 'Registering...' : 'Register Now'}
           </Button>
 
           <div className="space-y-4 mt-8">
