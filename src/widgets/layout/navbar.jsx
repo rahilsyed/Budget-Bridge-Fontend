@@ -1,21 +1,21 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import {
   Navbar as MTNavbar,
   Collapse,
   Typography,
   Button,
   IconButton,
-} from "@material-tailwind/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+} from '@material-tailwind/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 export function Navbar({ brandName, routes, action }) {
   const [openNav, setOpenNav] = React.useState(false);
 
   React.useEffect(() => {
     window.addEventListener(
-      "resize",
+      'resize',
       () => window.innerWidth >= 960 && setOpenNav(false)
     );
   }, []);
@@ -33,7 +33,7 @@ export function Navbar({ brandName, routes, action }) {
           <Link to={path} className="flex items-center gap-1 p-1 font-normal">
             {icon &&
               React.createElement(icon, {
-                className: "w-[18px] h-[18px] opacity-50 mr-1",
+                className: 'w-[18px] h-[18px] opacity-50 mr-1',
               })}
             {name}
           </Link>
@@ -55,7 +55,7 @@ export function Navbar({ brandName, routes, action }) {
         </Link>
         <div className="hidden lg:block">{navList}</div>
         {React.cloneElement(action, {
-          className: "hidden lg:inline-block",
+          className: 'hidden lg:inline-block',
         })}
         <IconButton
           variant="text"
@@ -74,7 +74,7 @@ export function Navbar({ brandName, routes, action }) {
         <div className="container mx-auto">
           {navList}
           {React.cloneElement(action, {
-            className: "w-full block lg:hidden",
+            className: 'w-full block lg:hidden',
           })}
         </div>
       </Collapse>
@@ -83,7 +83,7 @@ export function Navbar({ brandName, routes, action }) {
 }
 
 Navbar.defaultProps = {
-  brandName: "Expense Tracker",
+  brandName: 'Expense Tracker',
   action: (
     <a
       href="https://www.creative-tim.com/product/material-tailwind-dashboard-react"
@@ -102,6 +102,6 @@ Navbar.propTypes = {
   action: PropTypes.node,
 };
 
-Navbar.displayName = "/src/widgets/layout/navbar.jsx";
+Navbar.displayName = '/src/widgets/layout/navbar.jsx';
 
 export default Navbar;

@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+package-lock.json
+coverage
+CHANGELOG.md
+genezio.yaml
+index.html
+.gitignore
